@@ -108,7 +108,8 @@ def main():
     Mercury = Planet(3.285*(10**23), [0,0], [0,0])
     Earth   = planet()
     Mars    = Planet(6.4185*(10**23), [0,0], [0,0])
-    
+
+#WHAT'S UP BITCHES
     
 
 main()
