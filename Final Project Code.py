@@ -19,37 +19,63 @@ from numpy.linalg import norm
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.constants import G
+from copy import deepcopy as dpcopy
 
 
 
 class Planet(object):
     
     #Initialise and define mass, position, and velocity.
-    def __init__(self, mass, position, velocity):
+    def __init__(self, mass, position, velocity, colour):
         self.G = G
         
         self.m = mass
         self.r = np.array(position)
         self.v = np.array(velocity)
-        self.a = [0,0]
+        self.an = np.array([0,0])
+        self.ac = np.array([0,0])
+        self.ap = np.array([0,0])
         
-        self.Ke = 0.5*self.m*(norm(self.v)**2)
     
-    #Update 2 bodies for 1 timestep
-    def Update(self, b2, timelength):
-        G = 6.6743*(10**-11)
+    #Update positions
+    def Update(self, objs, ts):
         
-        self.a = -G*b2.m/((norm(self.r-b2.r))**3)*(self.r-b2.r)   #Update Acceleration of self
-        b2.a = -G*self.m/((norm(b2.r-self.r))**3)*(b2.r-self.r)   #Update Acceleration of Body 2
+        for i in objs: #Update positions of objects
+            i.r = i.r + i.v*ts + (1/6)*(4*i.ac-i.ap)*(ts**2)
         
-        self.v = self.v + self.a*timelength   #Update Velocity of self
-        b2.v = b2.v + b2.a*timelength         #Update Velocity of Body 2
+        for i in range(len(objs)): #Update new accelerations of objects
+            c = objs[0:i]+objs[i+1:]
+            Sum = np.array([0,0])
+            for x in c:
+                Sum += x.m/((norm(i.r-x.r)**3))*(i.r-x.r)
+            i.an = -G*Sum
         
-        self.r = self.r + self.v*timelength   #Update Position of self
-        b2.r = b2.r + b2.v*timelength         #Update Position of Body 2
+        for i in objs: #Update velocities of all objects
+            i.v = i.v + (1/6)*(2*i.an + 5*i.ac - i.ap)*ts
         
-        self.Ke = 0.5*self.m*(self.v**2)    #Update Kinetic Energy of self
-        b2.Ke = 0.5*b2.m*(b2.v**2)          #Update Kinetic Energy of body 2
+        for i in objs: #Update all accelerations of objects
+            i.ap = i.ac
+            i.ac = i.an
+            i.an = np.array([0,0])
+
+
+def main():
+    Sun     = Planet(1.989*(10**30), [0,0], [0,0], "orange")
+    Mercury = Planet(3.285*(10**23), [0,0], [0,0], "grey")
+    Venus   = Planet(4.8675*(10**24), [0,0], [0,0], "yellow")
+    Earth   = Planet(5.9724*(10**24), [0,0], [0,0], "Green")
+    Mars    = Planet(6.4185*(10**23), [0,0], [0,0], "red")
+    
+    Objs = [Sun, Mercury, Venus, Earth, Mars]
+
+main()
+            
+    #Update Velocities
+    
+    #Calculate Kinetic energy
+    
+    #Check orbital period
+        
         
 # class Simulate(object):
     
@@ -103,13 +129,7 @@ class Planet(object):
 #         self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=self.Frames, interval=10, blit=True)
 #         plt.show()
 
-def main():
-    Sun     = Planet(1.989*(10**30), [0,0], [0,0])
-    Mercury = Planet(3.285*(10**23), [0,0], [0,0])
-    Earth   = planet()
-    Mars    = Planet(6.4185*(10**23), [0,0], [0,0])
 
-#WHAT'S UP BITCHES
+
+
     
-
-main()
