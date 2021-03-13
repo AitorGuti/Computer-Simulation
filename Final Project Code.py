@@ -27,46 +27,53 @@ class Planet(object):
     
     #Initialise and define mass, position, and velocity.
     def __init__(self, mass, position, velocity, colour):
-        self.G = G
         
         self.m = mass
         self.r = np.array(position)
         self.v = np.array(velocity)
-        self.an = np.array([0,0])
-        self.ac = np.array([0,0])
-        self.ap = np.array([0,0])
+        self.an = np.array([0.,0.])
+        self.ac = np.array([0.,0.])
+        self.ap = np.array([0.,0.])
         
     
     #Update positions
     def Update(self, objs, ts):
+        a = objs
         
-        for i in objs: #Update positions of objects
+        for i in a: #Update positions of objects
             i.r = i.r + i.v*ts + (1/6)*(4*i.ac-i.ap)*(ts**2)
         
-        for i in range(len(objs)): #Update new accelerations of objects
-            c = objs[0:i]+objs[i+1:]
-            Sum = np.array([0,0])
+        for i in range(len(a)): #Update new accelerations of objects
+            c = a[0:i]+a[i+1:]
+            Sum = np.array([0.,0.])
             for x in c:
-                Sum += x.m/((norm(i.r-x.r)**3))*(i.r-x.r)
-            i.an = -G*Sum
+                Sum += x.m/((norm(a[i].r-x.r)**3))*(a[i].r-x.r)
+            a[i].an = -G*Sum
         
-        for i in objs: #Update velocities of all objects
+        for i in a: #Update velocities of all objects
             i.v = i.v + (1/6)*(2*i.an + 5*i.ac - i.ap)*ts
         
-        for i in objs: #Update all accelerations of objects
-            i.ap = i.ac
-            i.ac = i.an
+        for i in a: #Update all accelerations of objects
+            i.ap = dpcopy(i.ac)
+            i.ac = dpcopy(i.an)
             i.an = np.array([0,0])
+        return a
 
 
 def main():
-    Sun     = Planet(1.989*(10**30), [0,0], [0,0], "orange")
-    Mercury = Planet(3.285*(10**23), [0,0], [0,0], "grey")
-    Venus   = Planet(4.8675*(10**24), [0,0], [0,0], "yellow")
-    Earth   = Planet(5.9724*(10**24), [0,0], [0,0], "Green")
-    Mars    = Planet(6.4185*(10**23), [0,0], [0,0], "red")
+    Sun     = Planet(1.989*(10**30), [0.,0.], [0.,0.], "orange")
+    Mercury = Planet(3.285*(10**23), [57909227000.,0.], [0.,47360], "grey")
+    Venus   = Planet(4.8675*(10**24), [0.,108209475000.], [-35000,0.], "yellow")
+    Earth   = Planet(5.9724*(10**24), [-149598262000.,0.], [0.,-29780], "Green")
+    Mars    = Planet(6.4185*(10**23), [0.,-227943824000.], [24100,0.], "red")
     
     Objs = [Sun, Mercury, Venus, Earth, Mars]
+    
+    Moved = Sun.Update(Objs, 10000000.)
+    Movedd = Sun.Update(Moved, 1000.)
+    Moveddd = Sun.Update(Movedd, 1000.)
+    print(Moveddd[3].r)
+
 
 main()
             
@@ -128,8 +135,3 @@ main()
 #         # animate the plot
 #         self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=self.Frames, interval=10, blit=True)
 #         plt.show()
-
-
-
-
-    
