@@ -28,17 +28,19 @@ class Planet(object):
     #Initialise and define mass, position, and velocity.
     def __init__(self, mass, position, velocity, colour):
         
+        self.c = colour
         self.m = mass
         self.r = np.array(position)
         self.v = np.array(velocity)
         self.an = np.array([0.,0.])
         self.ac = np.array([0.,0.])
         self.ap = np.array([0.,0.])
+        self.KE = 0.5*self.m*(norm(self.v)**2)
         
     
-    #Update positions
-    def Update(self, objs, ts):
-        a = objs
+    #Update positions accelerations and velocities
+    def Update(self, bods, ts):
+        a = bods
         
         for i in a: #Update positions of objects
             i.r = i.r + i.v*ts + (1/6)*(4*i.ac-i.ap)*(ts**2)
@@ -58,7 +60,63 @@ class Planet(object):
             i.ac = dpcopy(i.an)
             i.an = np.array([0,0])
         return a
+    
+    #Update KE of the planet
+    def KE(self):
+        self.KE = 0.5*self.m*(norm(self.v)**2)
+    
+    #Check orbital period
+        
+        
+class Simulate(object):
+    
+    def __init__(self, bods, Frames, timelength):
+        
+        # Setup simulation parameters
+        self.b = bods
+        self.f = Frames
+        self.tl = timelength
+        
+    def init(self):
+        return self.patches[4],
+        
+    #Update the bodies themselves
+    def Opdate(self):
+        self.b = self.b[0].Update(self.b, self.tl)
 
+    #Update the positions of the circles on the plot
+    def animate(self, i):
+        self.Opdate()
+        for i in range(len(self.patches)):
+            self.patches[i].center = (self.b[i].r[0], self.b[i].r[1])
+
+        return self.patches[0], self.patches[1], self.patches[2], self.patches[3], self.patches[4],
+
+    def Display(self):
+        # create list for circles
+        self.patches = []
+         
+        # create circles to be animated and add to list
+        for i in self.b:
+            circ = plt.Circle((i.r[0], i.r[1]), 40000, color=i.c, animated=True)
+            self.patches.append(circ)
+            
+        # Create plot elements
+        fig = plt.figure()
+        ax = plt.axes()
+        
+        #add circles to axes
+        for i in self.patches:
+            ax.add_patch(i)
+        
+        ax.axis("scaled")
+        ax.set_xlim(-3**11,3**11)
+        ax.set_ylim(-3**11,3**11)
+        
+
+        # animate the plot
+        self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=self.f, interval=10, blit=True)
+        plt.show()
 
 def main():
     Sun     = Planet(1.989*(10**30), [0.,0.], [0.,0.], "orange")
@@ -69,69 +127,7 @@ def main():
     
     Objs = [Sun, Mercury, Venus, Earth, Mars]
     
-    Moved = Sun.Update(Objs, 10000000.)
-    Movedd = Sun.Update(Moved, 1000.)
-    Moveddd = Sun.Update(Movedd, 1000.)
-    print(Moveddd[3].r)
-
+    Simulation = Simulate(Objs, 300, 1000)
+    Simulation.Display()
 
 main()
-            
-    #Update Velocities
-    
-    #Calculate Kinetic energy
-    
-    #Check orbital period
-        
-        
-# class Simulate(object):
-    
-#     def __init__(self, b1, b2, Frames, timelength): #set b1 to b2 at end. *args for i in args
-#         self.b1 = b1
-#         self.b2 = b2
-#         # setup simulation parameters
-#         self.Frames = Frames
-#         self.tl = timelength
-        
-#     def init(self):
-#         return self.patches[1],
-        
-#     #Update the bodies themselves
-#     def opdate(self):
-#         self.b1.Update(self.b2, self.tl)
-#         self.b2.Update(self.b1, self.tl)
-
-#     #Update the positions of the circles on the plot
-#     def animate(self, i):
-#         self.opdate()
-#         self.patches[0].center = (self.b1.r[0], self.b1.r[1])
-#         self.patches[1].center = (self.b2.r[0],self.b2.r[1])
-#         print(self.b1.Ke+self.b2.Ke)
-#         return self.patches[0], self.patches[1],
-
-#     def display(self):
-#         # create list for circles
-#         self.patches = []
-         
-#         # create circles to be animated and add to list
-#         self.patch1 = plt.Circle((self.b1.r[0], self.b1.r[1]), 4000000, color="red", animated=True)
-#         self.patch2 = plt.Circle((self.b2.r[0], self.b2.r[1]), 500000, color="blue", animated=True)
-#         self.patches.append(self.patch1)
-#         self.patches.append(self.patch2)
-            
-#         # Create plot elements
-#         fig = plt.figure()
-#         ax = plt.axes()
-        
-#         #add circles to axes
-#         for i in range(0, len(self.patches)):
-#             ax.add_patch(self.patches[i])
-        
-#         ax.axis("scaled")
-#         ax.set_xlim(-10**7,10**7)
-#         ax.set_ylim(-10**7,10**7)
-        
-
-#         # animate the plot
-#         self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=self.Frames, interval=10, blit=True)
-#         plt.show()
