@@ -23,12 +23,13 @@ from copy import deepcopy as dpcopy
 
 
 
-class Planet(object):
+class Body(object):
     
     #Initialise and define mass, position, and velocity.
-    def __init__(self, mass, position, velocity, colour):
+    def __init__(self, mass, position, velocity, colour, patch_size):
         
         self.c = colour
+        self.patch_size = patch_size
         self.m = mass
         self.r = np.array(position)
         self.v = np.array(velocity)
@@ -76,9 +77,10 @@ class Simulate(object):
         self.b = bods
         self.f = Frames
         self.tl = timelength
-        
+    
+    #First instance of the animate object
     def init(self):
-        return self.patches[4],
+        return self.patches[0],
         
     #Update the bodies themselves
     def Opdate(self):
@@ -92,13 +94,14 @@ class Simulate(object):
 
         return self.patches[0], self.patches[1], self.patches[2], self.patches[3], self.patches[4],
 
+    #Creates patch list, makes the plot, and finally animates the plot
     def Display(self):
-        # create list for circles
+        # create list for patches
         self.patches = []
          
-        # create circles to be animated and add to list
+        # create patches to be animated and add to list
         for i in self.b:
-            circ = plt.Circle((i.r[0], i.r[1]), 40000, color=i.c, animated=True)
+            circ = plt.Circle((i.r[0], i.r[1]), i.patch_size,color=i.c, animated=True)
             self.patches.append(circ)
             
         # Create plot elements
@@ -109,25 +112,26 @@ class Simulate(object):
         for i in self.patches:
             ax.add_patch(i)
         
+        #Scale and set limits of plot
         ax.axis("scaled")
-        ax.set_xlim(-3**11,3**11)
-        ax.set_ylim(-3**11,3**11)
+        ax.set_xlim(-2.4*10**11,2.4*10**11)
+        ax.set_ylim(-2.4*10**11,2.4*10**11)
         
 
         # animate the plot
-        self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=self.f, interval=10, blit=True)
+        self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=self.f, interval=1, blit=True)
         plt.show()
 
 def main():
-    Sun     = Planet(1.989*(10**30), [0.,0.], [0.,0.], "orange")
-    Mercury = Planet(3.285*(10**23), [57909227000.,0.], [0.,47360], "grey")
-    Venus   = Planet(4.8675*(10**24), [0.,108209475000.], [-35000,0.], "yellow")
-    Earth   = Planet(5.9724*(10**24), [-149598262000.,0.], [0.,-29780], "Green")
-    Mars    = Planet(6.4185*(10**23), [0.,-227943824000.], [24100,0.], "red")
+    Sun     = Body(1.989*(10**30), [0.,0.], [0.,0.], "orange", 2*10**10)
+    Mercury = Body(3.285*(10**23), [57909227000.,0.], [0.,47360], "grey", 10**9)
+    Venus   = Body(4.8675*(10**24), [108209475000.,0.], [0.,35000.], "brown", 3*10**9)
+    Earth   = Body(5.9724*(10**24), [149598262000.,0.], [0.,29780.], "Green", 3*10**9)
+    Mars    = Body(6.4185*(10**23), [227943824000.,0.], [0.,24100.], "red", 2*10**9)
     
     Objs = [Sun, Mercury, Venus, Earth, Mars]
     
-    Simulation = Simulate(Objs, 300, 1000)
+    Simulation = Simulate(Objs, 300,8000)
     Simulation.Display()
 
 main()
