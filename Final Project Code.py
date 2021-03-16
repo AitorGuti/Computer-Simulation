@@ -20,6 +20,7 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.constants import G
 from copy import deepcopy as dpcopy
+import pandas as pd
 
 
 
@@ -36,7 +37,8 @@ class Body(object):
         self.an = np.array([0.,0.])
         self.ac = np.array([0.,0.])
         self.ap = np.array([0.,0.])
-        self.KE = 0.5*self.m*(norm(self.v)**2)
+        self.KE = 0
+        self.PE = 0
         
     
     #Update positions accelerations and velocities
@@ -63,7 +65,7 @@ class Body(object):
         return a
     
     #Update KE of the planet
-    def KE(self):
+    def KE_up(self):
         self.KE = 0.5*self.m*(norm(self.v)**2)
     
     #Check orbital period
@@ -121,6 +123,61 @@ class Simulate(object):
         # animate the plot
         self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=self.f, interval=1, blit=True)
         plt.show()
+        
+    def Tot_E(self, N): #Finds Tot, P, and K energies and lists them. N is Number of timesteps
+        
+        #Empty list to contain time, total, potential, and kinetic. In order and repeating
+        TPK = []
+        
+        #Loop N number of timelengths 
+        for i in range(N):
+            self.b = self.b[0].Update(self.b, self.tl)
+            
+            for k in self.b: #Update Kinetic Energy of all bodies
+                k.KE_up()
+            
+            for f in range(len(self.b)): #Update Potential Energy of all bodies
+                c = self.b[0:f]+self.b[f+1:]
+                Summ = 0
+                for x in c:
+                    Summ += -0.5*G*x.m*self.b[f].m/(norm(self.b[f].r-x.r))
+                self.b[f].PE = Summ
+
+            Kinetic=0
+            Potential=0
+            
+            for j in self.b: # Add up all Kinetic Energies and Potential Energies
+                Kinetic += j.KE
+                Potential += j.PE
+            
+            Total = Kinetic + Potential #Total Energy
+            Time = float(i*self.tl/60/60/24) #Define Time passed up till this point
+            
+            TPK.append(Time)
+            TPK.append(Total)
+            TPK.append(Potential)
+            TPK.append(Kinetic)
+            
+        TPK = np.array(TPK)
+        TPK = np.reshape(TPK, (-1, 4))
+        return TPK
+    
+    def Plot_E(self, listt):
+        x = listt[1:,0]
+        y1 = listt[1:,1]
+        y2 = listt[1:,2]
+        y3 = listt[1:,3]
+    
+        plt.scatter(x, y1, color = "blue", label = "Total E")
+        #plt.scatter(x, y2, color = "brown", label = "Potential E")
+        #plt.scatter(x, y3, color = "green", label = "Kinetic E")
+    
+        plt.title("Sum of the Potential and Kinetic Energies of Bodies in the Simulation of the Inner Solar System")
+        plt.xlabel("Time / Days")
+        plt.ylabel("Energy / Joules")
+        plt.legend()
+        
+        plt.show()
 
 def main():
     Sun     = Body(1.989*(10**30), [0.,0.], [0.,0.], "orange", 2*10**10)
@@ -131,7 +188,17 @@ def main():
     
     Objs = [Sun, Mercury, Venus, Earth, Mars]
     
-    Simulation = Simulate(Objs, 300,8000)
-    Simulation.Display()
+    Simulation = Simulate(Objs,300,3600)    #Create Simulation Object
+    
+    # Simulation.Display()
+    
+    TPK = Simulation.Tot_E(8766)    #To create n by 4 array where columns represent Time, Tot energy, Pot energy, Kin energy in order.
+    Simulation.Plot_E(TPK)  #To plot Total energy against time in days
+    
+    # df = pd.DataFrame(TPK)     #To create dataframe from Time, tot, pot, kin
+    #df.to_csv("THE_ARRAY.csv", index=False)    # To write dataframe as csv
+    
 
 main()
+
+
