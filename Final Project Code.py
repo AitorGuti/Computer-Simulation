@@ -68,8 +68,6 @@ class Body(object):
     #Update KE of the planet
     def KE_up(self):
         self.KE = 0.5*self.m*(norm(self.v)**2)
-    
-    #Check orbital period
         
         
 class Simulate(object):
@@ -95,7 +93,7 @@ class Simulate(object):
         for i in range(len(self.patches)):
             self.patches[i].center = (self.b[i].r[0], self.b[i].r[1])
 
-        return self.patches[0], self.patches[1], self.patches[2], self.patches[3], self.patches[4],
+        return [i for i in self.patches]
 
     #Creates patch list, makes the plot, and finally animates the plot
     def Display(self):
@@ -117,8 +115,8 @@ class Simulate(object):
         
         #Scale and set limits of plot
         ax.axis("scaled")
-        ax.set_xlim(-2.4*10**11,2.4*10**11)
-        ax.set_ylim(-2.4*10**11,2.4*10**11)
+        ax.set_xlim(-2.4e11,2.4e11)
+        ax.set_ylim(-2.4e11,2.4e11)
         
 
         # animate the plot
@@ -181,16 +179,21 @@ class Simulate(object):
         plt.show()
 
 def main():
-    Sun     = Body(1.989*(10**30), [0.,0.], [0.,0.], "orange", 2*10**10)
-    Mercury = Body(3.285*(10**23), [57909227000.,0.], [0.,47360], "grey", 10**9)
-    Venus   = Body(4.8675*(10**24), [108209475000.,0.], [0.,35000.], "brown", 3*10**9)
-    Earth_A = Body(5.9724*(10**24), [149598262000.,0.], [0.,29780.], "Green", 3*10**9)
-    Earth_B = Body(5.9724*(10**24), [m.sin(0.541052)*149598262000,-m.cos(0.541052)*149598262000], [m.cos(0.541052)*29780,m.sin(0.541052)*29780], "Green", 3*10**9)
-    Mars    = Body(6.4185*(10**23), [227943824000.,0.], [0.,24100.], "red", 2*10**9)
     
-    Objs = [Sun, Mercury, Venus, Earth_B, Mars]
+    #for line in readlines("filename"):
     
-    Simulation = Simulate(Objs,300,12000)    #Create Simulation Object
+    #Use readlines to replace this whole thing
+    Sun     = Body(1.989*(10**30), [0.,0.], [0.,0.], "orange", 2e10)
+    Mercury = Body(3.285*(10**23), [57909227000.,0.], [0.,47360.], "grey", 1e9)
+    Venus   = Body(4.8675*(10**24), [108209475000.,0.], [0.,35000.], "brown", 3e9)
+    Earth_A = Body(5.9724*(10**24), [149598262000.,0.], [0.,29780.], "Green", 3e9)
+    Earth_B = Body(5.9724*(10**24), [m.cos(m.pi/6)*149598262000,-m.sin(m.pi/6)*149598262000], [m.sin(m.pi/6)*29780,m.cos(m.pi/6)*29780], "Green", 3e9)
+    Mars    = Body(6.4185*(10**23), [227943824000.,0.], [0.,24100.], "red", 2e9)
+    Satellite = Body(2755,          [m.cos(m.pi/6)*(149598262000+6372000+650000),-m.sin(m.pi/6)*(149598262000+6372000+650000)], [24350,35560], "Black", 1e9)
+    
+    Objs = [Sun, Mercury, Venus, Earth_B, Mars, Satellite]
+    
+    Simulation = Simulate(Objs,1,1000)    #Create Simulation Object
     Simulation.Display()
     
     #TPK = Simulation.Tot_E(8766)    #To create n by 4 array where columns represent Time, Tot energy, Pot energy, Kin energy in order.
