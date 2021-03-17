@@ -16,6 +16,7 @@ Created on Fri Mar 12 11:55:52 2021
 
 import numpy as np
 from numpy.linalg import norm
+import math as m
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.constants import G
@@ -167,15 +168,15 @@ class Simulate(object):
         y1 = listt[1:,1]
         y2 = listt[1:,2]
         y3 = listt[1:,3]
+        
+        fig = plt.figure()
+        ax = plt.axes()
     
-        plt.scatter(x, y1, color = "blue", label = "Total E")
-        #plt.scatter(x, y2, color = "brown", label = "Potential E")
-        #plt.scatter(x, y3, color = "green", label = "Kinetic E")
+        plt.scatter(x, y1, color = "blue")
     
         plt.title("Sum of the Potential and Kinetic Energies of Bodies in the Simulation of the Inner Solar System")
-        plt.xlabel("Time / Days")
+        plt.xlabel("Time / Earth Days")
         plt.ylabel("Energy / Joules")
-        plt.legend()
         
         plt.show()
 
@@ -183,22 +184,18 @@ def main():
     Sun     = Body(1.989*(10**30), [0.,0.], [0.,0.], "orange", 2*10**10)
     Mercury = Body(3.285*(10**23), [57909227000.,0.], [0.,47360], "grey", 10**9)
     Venus   = Body(4.8675*(10**24), [108209475000.,0.], [0.,35000.], "brown", 3*10**9)
-    Earth   = Body(5.9724*(10**24), [149598262000.,0.], [0.,29780.], "Green", 3*10**9)
+    Earth_A = Body(5.9724*(10**24), [149598262000.,0.], [0.,29780.], "Green", 3*10**9)
+    Earth_B = Body(5.9724*(10**24), [m.sin(0.541052)*149598262000,-m.cos(0.541052)*149598262000], [m.cos(0.541052)*29780,m.sin(0.541052)*29780], "Green", 3*10**9)
     Mars    = Body(6.4185*(10**23), [227943824000.,0.], [0.,24100.], "red", 2*10**9)
     
-    Objs = [Sun, Mercury, Venus, Earth, Mars]
+    Objs = [Sun, Mercury, Venus, Earth_B, Mars]
     
-    Simulation = Simulate(Objs,300,3600)    #Create Simulation Object
+    Simulation = Simulate(Objs,300,12000)    #Create Simulation Object
+    Simulation.Display()
     
-    # Simulation.Display()
-    
-    TPK = Simulation.Tot_E(8766)    #To create n by 4 array where columns represent Time, Tot energy, Pot energy, Kin energy in order.
-    Simulation.Plot_E(TPK)  #To plot Total energy against time in days
-    
-    # df = pd.DataFrame(TPK)     #To create dataframe from Time, tot, pot, kin
+    #TPK = Simulation.Tot_E(8766)    #To create n by 4 array where columns represent Time, Tot energy, Pot energy, Kin energy in order.
+    #Simulation.Plot_E(TPK)  #To plot Total energy against time in days
+    #df = pd.DataFrame(TPK)     #To create dataframe from Time, tot, pot, kin
     #df.to_csv("THE_ARRAY.csv", index=False)    # To write dataframe as csv
-    
 
 main()
-
-
