@@ -189,11 +189,11 @@ def main():
     Earth_A = Body(5.9724*(10**24), [149598262000.,0.], [0.,29780.], "Green", 3e9)
     Earth_B = Body(5.9724*(10**24), [m.cos(m.pi/6)*149598262000,-m.sin(m.pi/6)*149598262000], [m.sin(m.pi/6)*29780,m.cos(m.pi/6)*29780], "Green", 3e9)
     Mars    = Body(6.4185*(10**23), [227943824000.,0.], [0.,24100.], "red", 2e9)
-    Satellite = Body(2755,          [m.cos(m.pi/6)*(149598262000+6372000+650000),-m.sin(m.pi/6)*(149598262000+6372000+650000)], [24350,35560], "Black", 1e9)
+    Satellite = Body(2755,          [m.cos(m.pi/6)*(149598262000+6372000+650000),-m.sin(m.pi/6)*(149598262000+6372000+650000)], [20960,26540], "Black", 1e9)
     
     Objs = [Sun, Mercury, Venus, Earth_B, Mars, Satellite]
     
-    Simulation = Simulate(Objs,1,1000)    #Create Simulation Object
+    Simulation = Simulate(Objs,1,10000)    #Create Simulation Object
     Simulation.Display()
     
     #TPK = Simulation.Tot_E(8766)    #To create n by 4 array where columns represent Time, Tot energy, Pot energy, Kin energy in order.
