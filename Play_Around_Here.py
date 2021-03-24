@@ -34,7 +34,7 @@ def main():
     Simulation.Display()
     
     #TPK = Simulation.Array_Energies(700)    #To create n by 5 array where columns represent Time, Tot energy, Pot energy, Kin energy, and Mars-Sat in order.
-    #Simulation.Plot_Energies(TPK)  #To plot Total energy against time in days
+    #Simulation.Plot_Time_Total(TPK)  #To plot Total energy against time in days
     #df = pd.DataFrame(TPK)     #To create dataframe from Time, tot, pot, kin
     #df.to_csv("THE_ARRAY.csv", index=False)    # To write dataframe as csv
 
