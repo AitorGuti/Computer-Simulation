@@ -19,10 +19,63 @@ import pandas as pd
 
 
 class Body(object):
+    """
+    A class used to represent a Celestial Body
+    ...
     
-    #Initialise and define mass, position, and velocity.
+    Attributes
+    ----------
+    c : str
+        Colour of the Planet as a String
+    patch_size : integer
+        The Size of the Patch in meters
+    m : float
+        Mass of the planet in kg
+    r : ndarray
+        Position in meters as a 1x2 array
+    v : ndarray
+        Velocity in meters/second as a 1x2 array
+    an : ndarray
+        New timestep acceleration in meters/second^2 as a 1x2 array
+    ac : ndarray
+        Current timestep acceleration in meters/second^2 as a 1x2 array
+    ap : ndarray
+        Previous timestep acceleration in meters/second^2 as a 1x2 array
+    KE : float
+        Kinetic Energy of the body relative to stationary cartesian plane in Joules
+    PE : float
+        Potential Energy of the body relative to other bodies in Joules
+
+    Methods
+    -------
+    Update(bods, ts)
+        Updates all bodies in Bodies in bods list for 1 timestep of length ts in seconds
+    
+    KE_up()
+        Updates the Kinetic Energy in Joules of a Body
+    """
+    #Initialise and define mass, position, and velocity, colour, and patch_size.
     def __init__(self, mass, position, velocity, colour, patch_size):
         
+        """
+        Parameters
+        ----------
+        mass : str
+            Mass of the body in kg
+            
+        position : 1x2 list of integers or floats
+            Position of the body on cartesian plane in meters
+        
+        velocity : 1x2 list of integers or floats
+            Velocity of the body in meters/second
+        
+        colour : str
+            Colour of the planet
+        
+        patch_size : integer
+            Size of the patch on the cartesian plane
+        """
+
         self.c = colour
         self.patch_size = patch_size
         self.m = mass
@@ -35,8 +88,19 @@ class Body(object):
         self.PE = 0
         
     
-    #Update positions accelerations and velocities
+    #Update positions accelerations and velocities for 1 timestep
     def Update(self, bods, ts):
+
+        """
+        Parameters
+        ----------
+        bods : list
+            List of Body objects
+        
+        ts : integer
+            Timestep length in seconds
+        """
+
         a = bods
         
         for i in a: #Update positions of objects
@@ -62,14 +126,48 @@ class Body(object):
     def KE_up(self):
         self.KE = 0.5*self.m*(norm(self.v)**2)
         
+        
 #Simulate class to hold objects and simulate
 class Simulate(object):
+    """
+    A class used to represent space and Body positions
+    ...
+    
+    Attributes
+    ----------
+    b : 1xn list
+        List of bodies to be simulated
+    tl : integer
+        Length of timesteps for each update in seconds
+
+    Utilised Methods
+    -------
+    Display()
+        Continually animates Body movement at timestep length chosen until user termination
+    
+    Energy_Array(N)
+        Uses simulation object and N number of timesteps to make nx5 array of floats with columns Time, Total E, Potential E, Kinetic E, Mars-Satellite Distance
+    
+    Plot_Time_Total(nx5 array)
+        Uses Energy_Array output to plot Time versus Total energy in the system
+    """
     
     def __init__(self, bods, timestep):
         
-        # Setup simulation parameters
+        """
+        Parameters
+        ----------
+        bods : list
+            List of Body objects
+        
+        timestep : integer
+            Timestep length of each update in seconds
+        """
+        
+            # Setup simulation parameters
         self.b = bods
         self.tl = timestep
+    
     
     #First instance of the animate object
     def init(self):
@@ -97,15 +195,15 @@ class Simulate(object):
             circ = plt.Circle((i.r[0], i.r[1]), i.patch_size,color=i.c, animated=True)
             self.patches.append(circ)
             
-        # Create plot elements
+        # create plot elements
         fig = plt.figure()
         ax = plt.axes()
         
-        #add circles to axes
+        # add circles to axes
         for i in self.patches:
             ax.add_patch(i)
         
-        #Scale and set limits of plot
+        # scale and set limits of plot
         ax.axis("scaled")
         ax.set_xlim(-2.4e11,2.4e11)
         ax.set_ylim(-2.4e11,2.4e11)
@@ -115,8 +213,14 @@ class Simulate(object):
         self.anim = FuncAnimation(fig, self.animate, init_func=self.init, frames=1, interval=1, blit=True)
         plt.show()
 
-    #Finds Tot, P, K, and Mars-Satellite energies and distance and lists them. N is Number of timesteps
+    #Finds Total, Potential, and Kinetic energies. Also Mars-Satellite distance and lists them per timestep. N is Number of timesteps
     def Array_Energies(self, N):
+        """
+        Parameters
+        ----------
+        N : integer
+            Number of timesteps to be plotted
+        """
         
         #Empty list to contain time, total, potential, and kinetic. In order and repeating
         TPK = []
@@ -157,12 +261,18 @@ class Simulate(object):
         TPK = np.reshape(TPK, (-1, 5))
         return TPK
     
-    def Plot_Energies(self, listt):
-        x = listt[1:,0]
-        y1 = listt[1:,1]
-        y2 = listt[1:,2]
-        y3 = listt[1:,3]
-        y4 = listt[1:,4]
+    def Plot_Time_Total(self, Energies):
+        """
+        Parameters
+        ----------
+        Energies : nx5 array
+            Output from the Array_Energies method
+        """
+        x = Energies[1:,0]
+        y1 = Energies[1:,1]
+        y2 = Energies[1:,2]
+        y3 = Energies[1:,3]
+        y4 = Energies[1:,4]
         
         fig = plt.figure()
         ax = plt.axes()
