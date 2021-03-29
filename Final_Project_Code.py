@@ -49,7 +49,7 @@ class Body(object):
     Methods
     -------
     Update(bods, ts)
-        Updates all bodies in Bodies in bods list for 1 timestep of length ts in seconds
+        Updates all Bodies in bods list for 1 timestep of length ts in seconds
     
     KE_up()
         Updates the Kinetic Energy in Joules of a Body
