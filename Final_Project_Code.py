@@ -202,11 +202,17 @@ class Simulate(object):
         # add circles to axes
         for i in self.patches:
             ax.add_patch(i)
+            
+        #Set scale to outermost planets on each axis
+        Body_Sun_Distance = []
+        for i in self.b:
+            Body_Sun_Distance.append(norm(i.r))
+        Max_All = 1.07*max(Body_Sun_Distance)
         
         # scale and set limits of plot
         ax.axis("scaled")
-        ax.set_xlim(-2.4e11,2.4e11)
-        ax.set_ylim(-2.4e11,2.4e11)
+        ax.set_xlim(-Max_All,Max_All)
+        ax.set_ylim(-Max_All,Max_All)
         
         
         # animate the plot
@@ -285,6 +291,7 @@ class Simulate(object):
         
         plt.show()
 
+############### Stuff Below is Extra. Not necessary.
 # def main():
     
 #     #for line in readlines("filename"):
