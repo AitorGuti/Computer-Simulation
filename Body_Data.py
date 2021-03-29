@@ -1,4 +1,4 @@
-# Name,         Mass,                                        Position,                                               Velocity,                      Colour,         Patch_Size
+# Name,         Mass,                                   XPosition,YPosition                                     XVelocity,Yvelocity                 Colour,         Patch_Size
 Sun         1.989e30                                          0. 0.                                                   0. 0.                         Orange          2e10
 Mercury     3.285e23                                     57909227000. 0.                                             0. 47360.                      Grey            1e9
 Venus       4.8675e24                                   108209475000. 0.                                            0. 35000.                       Brown           3e9
